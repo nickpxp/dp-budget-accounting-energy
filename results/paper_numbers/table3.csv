@@ -1,0 +1,4 @@
+rule,eps_now,eps_reserve,auc_now,auc_later
+Spend all now,5.0,0.0,0.787,
+20% reserve,4.0,1.0,0.777,0.679
+40% reserve,3.0,2.0,0.763,0.736

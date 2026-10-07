@@ -1,0 +1,73 @@
+{
+  "baseline_kj": 22.0,
+  "dp_mean_kj": 43.4,
+  "overhead_mean_pct": 97.6,
+  "overhead_min_pct": 95.4,
+  "overhead_max_pct": 99.2,
+  "auc_baseline": 0.976,
+  "auc_eps025": 0.551,
+  "auc_eps5": 0.787,
+  "step_025_to_1": 0.128,
+  "step_4_to_5": 0.01,
+  "paired_drop_5_4_min": 0.006,
+  "paired_drop_5_4_max": 0.013,
+  "paired_drop_5_3_min": 0.017,
+  "paired_drop_5_3_max": 0.032,
+  "slope_all_runs": 0.13,
+  "ci_all_runs": [
+    -0.21,
+    0.48
+  ],
+  "p_all_runs": 0.44,
+  "slope_grid": 0.13,
+  "ci_grid": [
+    -0.37,
+    0.64
+  ],
+  "p_grid": 0.56,
+  "tost_grid_p": 0.002,
+  "cv_max_pct": 1.5,
+  "cv_other_max_pct": 0.7,
+  "eps_realized_total": 57.6,
+  "eps_declared_total": 57.75,
+  "eps_audit_total": 21.0,
+  "canary_unprotected_min": 0.43,
+  "canary_unprotected_max": 0.61,
+  "canary_protected_zero_of_nine": 7,
+  "canary_protected_max": 0.09,
+  "audit_cost_over_train": 2.0,
+  "lira_unprotected_eps": 0.12,
+  "lira_models": 64,
+  "reserve20_now": 0.777,
+  "reserve20_later": 0.679,
+  "reserve20_drop": 0.01,
+  "reserve40_now": 0.763,
+  "reserve40_later": 0.736,
+  "reserve40_drop": 0.025,
+  "delta": 4.6e-05,
+  "n_train": 8709,
+  "recomputed": {
+    "regression_all_runs": {
+      "slope": 0.13299438711708328,
+      "se": 0.16924779886013766,
+      "lo": -0.21369401280114791,
+      "hi": 0.4796827870353145,
+      "p": 0.43858604770403176,
+      "tost_p": 9.915012050490582e-06
+    },
+    "regression_grid_means": {
+      "slope": 0.13299438711709444,
+      "se": 0.2195481474773586,
+      "lo": -0.3732845488421085,
+      "hi": 0.6392733230762974,
+      "p": 0.5614599889598373,
+      "tost_p": 0.002120847425088533
+    },
+    "per_seed_slopes": {
+      "0": 0.3075601033532245,
+      "1": 0.11211272741998059,
+      "2": -0.020689669421934283
+    },
+    "audit_over_train": 2.0318424526315733
+  }
+}

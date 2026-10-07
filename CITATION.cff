@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "dp-budget-accounting: code and measurements for 'Liquidating the Fund: Differential Privacy and the Accounting of an Exhaustible Stock'"
+type: software
+authors:
+  - family-names: Pierrelouis
+    given-names: Nick
+    affiliation: "Independent Researcher"
+version: 1.0.0
+date-released: 2026-10-07
+license: MIT
+keywords:
+  - differential privacy
+  - privacy-loss budget
+  - DP-SGD
+  - energy measurement
+  - electrocardiogram
