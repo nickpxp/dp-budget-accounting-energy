@@ -47,20 +47,23 @@ PAPER = {
     "p_grid": 0.56,
     "tost_grid_p": 0.002,
     "tost_seed_p": 0.006,
+    "eps_audit_both_arms": 42.0,
+    "n_private_shadows": 220,
+    "eps_private_shadows": 497.0,
     "cv_max_pct": 1.5,
     "cv_other_max_pct": 0.7,
     "eps_realized_total": 57.6,
     "eps_declared_total": 57.75,
     "eps_audit_total": 21.0,
-    "canary_unprotected_min": 0.43,
+    "canary_unprotected_min": 0.42,
     "canary_unprotected_max": 0.61,
     "canary_protected_zero_of_nine": 7,
     "canary_protected_max": 0.09,
     "audit_unprotected_wall_s": 183,
     "audit_unprotected_kj": 44.6,
     "audit_cost_per_record_over_train": 1.0,
-    "canary_ep100_unprotected_min": 1.54,
-    "canary_ep100_unprotected_max": 2.02,
+    "canary_ep100_unprotected_min": 1.53,
+    "canary_ep100_unprotected_max": 2.00,
     "canary_ep100_protected_zero_of_nine": 9,
     "lira_unprotected_eps": 0.12,
     "lira_models": 64,
@@ -209,6 +212,13 @@ c100 = pd.read_csv(SWEEP / "canary_summary_ep100.csv")
 u100 = c100[c100.epsilon.isna()]; p100 = c100[c100.epsilon.notna()]
 check("ep100 unprotected min", u100.epsilon_emp.min(), PAPER["canary_ep100_unprotected_min"], 0.005)
 check("ep100 unprotected max", u100.epsilon_emp.max(), PAPER["canary_ep100_unprotected_max"], 0.005)
+check("audit eps total, both arms", prot.epsilon_spent.sum() + p100.epsilon_spent.sum(), PAPER["eps_audit_both_arms"], 0.1)
+sh = pd.read_csv(SWEEP / "shadows_summary.csv")
+shp = sh[sh.epsilon.notna()]
+check("private reference models", len(shp), PAPER["n_private_shadows"], 0)
+check("declared eps, private reference models", shp.epsilon.sum(), PAPER["eps_private_shadows"], 0.05)
+per_record = shp.epsilon.sum() * 0.5
+check("typical record exposure from reference models", per_record, 250.0, 5.0)
 check("ep100 protected runs with zero bound", int((p100.epsilon_emp == 0).sum()), PAPER["canary_ep100_protected_zero_of_nine"], 0)
 at = pd.read_csv(SWEEP / "attacks_summary.csv")
 lira = at[(at.attack == "lira") & at.epsilon.isna()]

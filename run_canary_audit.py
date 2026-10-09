@@ -103,38 +103,45 @@ def one_run_epsilon_lower_bound(n_correct, n_guesses, delta, n_canaries,
                             alpha=0.05, eps_max=20.0, grid=2000):
     """Epsilon lower bound from correct guesses.
 
-    Under (eps, delta)-DP the number of correct guesses W out of r guesses
-    satisfies
+    Under (eps, delta)-DP with m canaries, the number of correct guesses W
+    out of r guesses satisfies, for every v,
 
-        Pr[W >= v] <= beta + 2*m*delta*alpha,
-        beta = Pr[Bin(r, e^eps / (e^eps + 1)) >= v]
+        Pr[W >= v] <= beta + 2*m*delta*slope,
+        beta  = Pr[W* >= v],  W* ~ Bin(r, e^eps / (e^eps + 1)),
+        slope = max_i (Pr[W* >= v - i] - beta) / i   over i = 1..m,
 
-    so an eps is ruled out at level alpha when beta <= alpha*(1 - 2*m*delta).
-    The bound is the largest eps that is still ruled out; beta increases
-    monotonically in eps, so the sweep can stop at the first eps that survives.
+    so an eps is ruled out at significance level alpha when the right-hand
+    side is at most alpha. The bound is the largest eps that is still ruled
+    out; the right-hand side increases monotonically in eps, so the sweep
+    can stop at the first eps that survives.
 
-    Returns 0.0 when nothing can be ruled out. That is the honest answer for an
-    audit that found no signal, not a failure to compute.
+    Args:
+        n_correct: correct guesses v.
+        n_guesses: guesses made r (abstentions excluded).
+        delta: the delta the mechanism was trained with.
+        n_canaries: canaries offered m.
+        alpha: significance level after any multiple-comparison correction.
+        eps_max: largest eps on the search grid.
+        grid: number of grid points from 0 to eps_max.
+
+    Returns:
+        The lower bound, or 0.0 when nothing can be ruled out, which is the
+        honest answer for an audit that found no signal.
     """
-    if n_guesses <= 0:
+    if n_guesses <= 0 or n_correct <= 0:
         return 0.0
 
-    # Budget left for the binomial tail after the delta correction. With many
-    # canaries and a loose delta this can go non-positive, in which case no
-    # bound is certifiable at any eps and the audit is uninformative by
-    # construction, worth checking before spending the compute.
-    beta_budget = alpha * (1.0 - 2.0 * n_canaries * delta)
-    if beta_budget <= 0:
-        return 0.0
-
+    i = np.arange(1, n_canaries + 1)
     lower = 0.0
     for eps in np.linspace(0.0, eps_max, grid):
         p = np.exp(eps) / (np.exp(eps) + 1.0)
         beta = float(binom.sf(n_correct - 1, n_guesses, p))
-        if beta <= beta_budget:
+        tails = binom.sf(n_correct - 1 - i, n_guesses, p)
+        slope = float(np.max((tails - beta) / i))
+        if beta + 2.0 * n_canaries * delta * slope <= alpha:
             lower = float(eps)              # this eps is ruled out; bound rises
         else:
-            break                           # beta grows with eps; stop here
+            break                           # the bound grows with eps; stop here
     return lower
 
 

@@ -6,7 +6,7 @@ privacy-loss budget as an exhaustible stock and proposes a ledger, a written
 allocation rule, and a reserve. This repository holds the clinical measurement
 behind its Section 6 and Tables 2 and 3: a DP-SGD training sweep on PTB-XL with
 the energy of every run metered in hardware, and a one-run canary audit of the
-trained models.
+same training recipe.
 
 The result the paper uses: training under the mechanism costs the same
 electricity at every privacy budget (97.6% over the non-private baseline,
@@ -89,7 +89,11 @@ passwordless sudoers rule for `cat` on that path).
    the audit trains on the full 17,418-record pool, which is how the
    deposited `canary_summary_ep30.csv` was produced; the paper reports that
    arm's cost per record. The 100-epoch arm in `canary_summary_ep100.csv`
-   was size-matched to the sweep's 8,709-record half.
+   was size-matched to the sweep's 8,709-record half. Both deposited audit
+   CSVs predate the current script: the 100-epoch arm has no `epochs` column
+   and its provenance file lacks the training keys the script now writes. The
+   `epsilon_emp` column in both was recomputed from the recorded guesses with
+   the delta correction in `one_run_epsilon_lower_bound` as deposited.
 
 A sweep must go into a fresh directory: training skips existing checkpoints
 and writes no energy for cached rows.
@@ -103,4 +107,5 @@ split is regenerated from its seed by `run_full_sweep.py` and saved as
 
 ## Cite
 
-See `CITATION.cff`. Archived at Zenodo: DOI to be added on release.
+See `CITATION.cff`. Archived at Zenodo: https://doi.org/10.5281/zenodo.23267996
+(this DOI covers all versions and resolves to the latest).
