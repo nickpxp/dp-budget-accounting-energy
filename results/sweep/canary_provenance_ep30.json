@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-08-15T16:36:48",
+  "hostname": "nickyp-LEGION-T7-34IAS10",
+  "kernel": "7.0.0-29-generic",
+  "python": "3.14.4",
+  "rapl_packages": [
+    "intel-rapl:0"
+  ],
+  "rapl_access": "sudo",
+  "gpu_energy_counter": true,
+  "rapl_max_range_uj_intel-rapl:0": 262143328850,
+  "gpu_name": "NVIDIA GeForce RTX 5070 Ti",
+  "nvml_driver": "595.84",
+  "torch": "2.11.0+cu128",
+  "cuda_capability": [
+    12,
+    0
+  ],
+  "canary_kind": "flipped",
+  "n_canaries": 1000,
+  "inclusion_p": 0.5,
+  "method": "Steinke-Nasr-Jagielski 2023",
+  "alpha": 0.05,
+  "delta": 4.6e-05,
+  "epochs": 30,
+  "seeds": 3,
+  "batch_size": 256,
+  "learning_rate": 0.001,
+  "max_grad_norm": 1.0
+}

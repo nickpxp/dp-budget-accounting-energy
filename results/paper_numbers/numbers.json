@@ -26,6 +26,7 @@
   ],
   "p_grid": 0.56,
   "tost_grid_p": 0.002,
+  "tost_seed_p": 0.006,
   "cv_max_pct": 1.5,
   "cv_other_max_pct": 0.7,
   "eps_realized_total": 57.6,
@@ -35,7 +36,12 @@
   "canary_unprotected_max": 0.61,
   "canary_protected_zero_of_nine": 7,
   "canary_protected_max": 0.09,
-  "audit_cost_over_train": 2.0,
+  "audit_unprotected_wall_s": 183,
+  "audit_unprotected_kj": 44.6,
+  "audit_cost_per_record_over_train": 1.0,
+  "canary_ep100_unprotected_min": 1.54,
+  "canary_ep100_unprotected_max": 2.02,
+  "canary_ep100_protected_zero_of_nine": 9,
   "lira_unprotected_eps": 0.12,
   "lira_models": 64,
   "reserve20_now": 0.777,
@@ -68,6 +74,6 @@
       "1": 0.11211272741998059,
       "2": -0.020689669421934283
     },
-    "audit_over_train": 2.0318424526315733
+    "audit_over_train": 0.9864526202713948
   }
 }

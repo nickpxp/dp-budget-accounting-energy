@@ -29,7 +29,8 @@ run_canary_audit.py      one-run canary audit (Steinke, Nasr and Jagielski, 2023
 tools/run_paper_numbers.py   recomputes every number in the paper from results/sweep and
                          checks each against the printed value
 tools/make_figures.py    Figures 1 and 2
-results/sweep/           the measurement CSVs every number comes from (canonical run)
+results/sweep/           the measurement CSVs every number comes from (canonical run),
+                         with idle_baseline.json and the audit provenance JSONs
 results/paper_numbers/   Table 2, Table 3 and numbers.json as recomputed
 results/figures/         the figures as submitted (600 dpi PNG and vector PDF)
 ```
@@ -83,7 +84,12 @@ passwordless sudoers rule for `cat` on that path).
 4. `python3 run_full_sweep.py --out-dir results/sweep_new` runs all four
    stages. `--stages targets` runs only the 33 metered target models. The
    stage list is one comma-separated token.
-5. `python3 run_canary_audit.py --sweep results/sweep_new --canary-kind flipped --epochs 30`
+5. `python3 run_canary_audit.py --sweep results/sweep_new --canary-kind flipped --epochs 30`.
+   Point `--sweep` at the directory that holds `target_mask.npy`. Without it
+   the audit trains on the full 17,418-record pool, which is how the
+   deposited `canary_summary_ep30.csv` was produced; the paper reports that
+   arm's cost per record. The 100-epoch arm in `canary_summary_ep100.csv`
+   was size-matched to the sweep's 8,709-record half.
 
 A sweep must go into a fresh directory: training skips existing checkpoints
 and writes no energy for cached rows.

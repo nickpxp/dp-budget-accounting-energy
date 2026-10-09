@@ -46,6 +46,7 @@ PAPER = {
     "ci_grid": (-0.37, 0.64),
     "p_grid": 0.56,
     "tost_grid_p": 0.002,
+    "tost_seed_p": 0.006,
     "cv_max_pct": 1.5,
     "cv_other_max_pct": 0.7,
     "eps_realized_total": 57.6,
@@ -55,7 +56,12 @@ PAPER = {
     "canary_unprotected_max": 0.61,
     "canary_protected_zero_of_nine": 7,
     "canary_protected_max": 0.09,
-    "audit_cost_over_train": 2.0,
+    "audit_unprotected_wall_s": 183,
+    "audit_unprotected_kj": 44.6,
+    "audit_cost_per_record_over_train": 1.0,
+    "canary_ep100_unprotected_min": 1.54,
+    "canary_ep100_unprotected_max": 2.02,
+    "canary_ep100_protected_zero_of_nine": 9,
     "lira_unprotected_eps": 0.12,
     "lira_models": 64,
     "reserve20_now": 0.777, "reserve20_later": 0.679, "reserve20_drop": 0.010,
@@ -155,6 +161,13 @@ check("p, grid means", r_grid["p"], PAPER["p_grid"], 0.005)
 check("equivalence p, grid means", r_grid["tost_p"], PAPER["tost_grid_p"], 0.0005)
 per_seed = {int(s): ols(gs.epsilon, gs.overhead_pct)["slope"] for s, gs in dp.groupby("seed")}
 print(f"  per-seed slopes: {', '.join(f'{v:.2f}' for v in per_seed.values())} (paper 0.31, 0.11, -0.02)")
+# seed-level equivalence test: the three per-seed slopes as the units,
+# one-sample TOST against the same margin of one point per unit epsilon
+sl = np.array(list(per_seed.values()))
+se_seed = sl.std(ddof=1) / np.sqrt(len(sl))
+tost_seed = max(stats.t.cdf((sl.mean() - 1) / se_seed, len(sl) - 1),
+                1 - stats.t.cdf((sl.mean() + 1) / se_seed, len(sl) - 1))
+check("equivalence p, per-seed slopes", tost_seed, PAPER["tost_seed_p"], 0.0005)
 
 # ---------------------------------------------------------------- Table 3
 print("Table 3")
@@ -183,8 +196,20 @@ check("canary unprotected max", unp.epsilon_emp.max(), PAPER["canary_unprotected
 check("protected runs with zero bound", int((prot.epsilon_emp == 0).sum()), PAPER["canary_protected_zero_of_nine"], 0)
 check("protected max bound", prot.epsilon_emp.max(), PAPER["canary_protected_max"], 0.005)
 check("audit eps total", prot.epsilon_spent.sum(), PAPER["eps_audit_total"], 0.05)
-audit_over_train = unp.total_j_net.mean() / base_j
-check("audit cost / training run", audit_over_train, PAPER["audit_cost_over_train"], 0.05)
+check("audit unprotected wall (s)", unp.wall_s.mean(), PAPER["audit_unprotected_wall_s"], 1.0)
+check("audit unprotected energy (kJ)", unp.total_j_net.mean() / 1000, PAPER["audit_unprotected_kj"], 0.05)
+# the 30-epoch audit trained on the full 17,418-record pool plus included
+# canaries, not the 8,709-record half the sweep used, so the fair comparison
+# is energy per training record
+n_half = 8709
+n_full = 17418
+audit_over_train = (unp.total_j_net.mean() / (n_full + unp.n_included.mean())) / (base_j / n_half)
+check("audit cost per record / training run", audit_over_train, PAPER["audit_cost_per_record_over_train"], 0.05)
+c100 = pd.read_csv(SWEEP / "canary_summary_ep100.csv")
+u100 = c100[c100.epsilon.isna()]; p100 = c100[c100.epsilon.notna()]
+check("ep100 unprotected min", u100.epsilon_emp.min(), PAPER["canary_ep100_unprotected_min"], 0.005)
+check("ep100 unprotected max", u100.epsilon_emp.max(), PAPER["canary_ep100_unprotected_max"], 0.005)
+check("ep100 protected runs with zero bound", int((p100.epsilon_emp == 0).sum()), PAPER["canary_ep100_protected_zero_of_nine"], 0)
 at = pd.read_csv(SWEEP / "attacks_summary.csv")
 lira = at[(at.attack == "lira") & at.epsilon.isna()]
 check("LiRA reference models", lira.n_models.iloc[0], PAPER["lira_models"], 0)

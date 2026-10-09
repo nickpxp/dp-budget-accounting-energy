@@ -112,9 +112,9 @@ def _assert_prevalence(data: PTBXLData, tol: float = 0.005) -> None:
 def fit_normalizer(X_train: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Compute per-lead mean and std from training data only.
 
-    Post-processing of model outputs costs no privacy budget
-    Proposition 2.1. Normalization stats from the train fold are inputs
-    to that post-processing, hence also ε-free.
+    These 24 numbers are computed from the private training records before
+    DP-SGD runs, so post-processing does not cover them and their privacy
+    cost is not included in the reported epsilon. The paper states this.
 
     Returns
     -------
